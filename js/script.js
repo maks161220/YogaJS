@@ -118,4 +118,96 @@ window.addEventListener('DOMContentLoaded', function() {    //пишемо за�
         });
     }
 
+    //Form
+    let message = {
+        loading: "Завантаження...",
+        success: "Дякую! Скоро ми з вами зв'яжемося",
+        fail: "Щось пішло не так!"
+    };
+
+    let form = document.querySelector('#form'),
+        inputs = form.getElementsByTagName('input'),
+        showMessage = document.createElement('div');
+
+    showMessage.classList.add('status');
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        form.appendChild(showMessage);
+
+        let formData = new FormData(form);
+
+        function postData(data) {
+            let promise = new Promise(function(resolve, reject){
+                let request = new XMLHttpRequest();
+                request.open('POST', 'server.php');
+                request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    
+                request.addEventListener('readystatechange', function() {
+                    if (request.readyState < 4) {
+                        resolve();
+                    } else if (request.readyState === 4 && request.status == 200) {
+                        resolve();
+                    } else {
+                        reject();
+                    }
+                });
+                request.send(formData);
+            });
+        }
+
+        function clearInput() {
+            for (let i = 0; i < inputs.length; i++){
+                inputs[i].value = '';
+            }
+        }
+
+        postData(formData)
+                            .then(() => showMessage.innerHTML = message.loading)
+                            .then(() => showMessage.innerHTML = message.success)
+                            .catch(() =>showMessage.innerHTML = message.fail)
+                            .then(() => clearInput());
+    });
+
+    let formMain = document.querySelector('.main-form'),
+        inputFormMain = document.getElementsByTagName('input');
+
+    formMain.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        formMain.appendChild(showMessage);
+        let formDataMain = new FormData(formMain);
+
+        function postData(data) {
+            let promise = new Promise(function(resolve, reject){
+                let request = new XMLHttpRequest();
+                request.open('POST', 'server.php');
+                request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+                request.addEventListener('readystatechange', function() {
+                    if (request.readyState < 4) {
+                        resolve();
+                    } else if (request.readyState === 4 && request.status == 200) {
+                        resolve();
+                    } else {
+                        reject();
+                    }
+                });
+                request.send(formDataMain);
+            }); 
+        }
+        
+        function clearInput() {
+            for (let i = 0; i < inputFormMain.length; i++){
+                inputFormMain[i].value = '';
+            }
+        }
+
+        postData(formDataMain)
+                                .then(() => showMessage.innerHTML = message.loading)
+                                .then(() => showMessage.innerHTML = message.success)
+                                .catch(() => showMessage.innerHTML = message.fail)
+                                .then(() => clearInput());
+    });
 });
